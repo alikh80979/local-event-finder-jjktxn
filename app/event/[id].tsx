@@ -11,12 +11,16 @@ export default function EventDetailScreen() {
   const { id } = useLocalSearchParams();
   const event = events.find(e => e.id === id);
 
+  console.log('EventDetailScreen - Event ID:', id);
+  console.log('EventDetailScreen - Found event:', event);
+
   if (!event) {
     return (
       <SafeAreaView style={styles.container}>
         <Stack.Screen
           options={{
             title: 'Event Not Found',
+            headerShown: true,
             headerLeft: () => (
               <Pressable onPress={() => router.back()} style={styles.backButton}>
                 <IconSymbol name="chevron.left" color={colors.text} size={24} />
@@ -26,6 +30,9 @@ export default function EventDetailScreen() {
         />
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Event not found</Text>
+          <Pressable style={styles.backToHomeButton} onPress={() => router.push('/(tabs)/(home)')}>
+            <Text style={styles.backToHomeText}>Back to Events</Text>
+          </Pressable>
         </View>
       </SafeAreaView>
     );
@@ -36,6 +43,7 @@ export default function EventDetailScreen() {
       <Stack.Screen
         options={{
           title: event.title,
+          headerShown: true,
           headerLeft: () => (
             <Pressable onPress={() => router.back()} style={styles.backButton}>
               <IconSymbol name="chevron.left" color={colors.text} size={24} />
@@ -93,7 +101,13 @@ export default function EventDetailScreen() {
             <Text style={styles.description}>{event.description}</Text>
           </View>
 
-          <Pressable style={styles.attendButton}>
+          <Pressable 
+            style={styles.attendButton}
+            onPress={() => {
+              console.log('User interested in event:', event.title);
+              // Here you could add logic to save the event to favorites or register interest
+            }}
+          >
             <Text style={styles.attendButtonText}>I'm Interested</Text>
           </Pressable>
         </View>
@@ -191,9 +205,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
   },
   errorText: {
     fontSize: 18,
     color: colors.textSecondary,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  backToHomeButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  backToHomeText: {
+    color: colors.card,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

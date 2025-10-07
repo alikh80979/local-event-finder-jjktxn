@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   View,
@@ -46,30 +47,45 @@ export default function FloatingTabBar({
   const theme = useTheme();
   const animatedValue = useSharedValue(0);
 
+  console.log('FloatingTabBar - Current pathname:', pathname);
+  console.log('FloatingTabBar - Available tabs:', tabs);
+
   // Improved active tab detection with better path matching
   const activeTabIndex = React.useMemo(() => {
+    console.log('Calculating active tab for pathname:', pathname);
+    
     // Find the best matching tab based on the current pathname
     let bestMatch = -1;
     let bestMatchScore = 0;
 
     tabs.forEach((tab, index) => {
       let score = 0;
+      console.log(`Checking tab ${index}: ${tab.route} against ${pathname}`);
 
       // Exact route match gets highest score
       if (pathname === tab.route) {
         score = 100;
+        console.log(`Exact match for tab ${index}: ${tab.route}`);
       }
       // Check if pathname starts with tab route (for nested routes)
       else if (pathname.startsWith(tab.route)) {
         score = 80;
+        console.log(`Starts with match for tab ${index}: ${tab.route}`);
       }
       // Check if pathname contains the tab name
       else if (pathname.includes(tab.name)) {
         score = 60;
+        console.log(`Name match for tab ${index}: ${tab.name}`);
       }
-      // Check for partial matches in the route
-      else if (tab.route.includes('/(tabs)/') && pathname.includes(tab.route.split('/(tabs)/')[1])) {
-        score = 40;
+      // Special handling for home route
+      else if (tab.name === '(home)' && (pathname === '/' || pathname.includes('/(home)'))) {
+        score = 70;
+        console.log(`Home route match for tab ${index}`);
+      }
+      // Check for profile route
+      else if (tab.name === 'profile' && pathname.includes('/profile')) {
+        score = 70;
+        console.log(`Profile route match for tab ${index}`);
       }
 
       if (score > bestMatchScore) {
@@ -78,6 +94,7 @@ export default function FloatingTabBar({
       }
     });
 
+    console.log(`Best match: tab ${bestMatch} with score ${bestMatchScore}`);
     // Default to first tab if no match found
     return bestMatch >= 0 ? bestMatch : 0;
   }, [pathname, tabs]);
@@ -93,10 +110,19 @@ export default function FloatingTabBar({
   }, [activeTabIndex, animatedValue]);
 
   const handleTabPress = (route: string) => {
-    router.push(route);
+    console.log('Tab pressed, navigating to:', route);
+    try {
+      router.push(route);
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // Fallback navigation
+      if (route.includes('profile')) {
+        router.push('/profile');
+      } else {
+        router.push('/');
+      }
+    }
   };
-
-  // Remove unnecessary tabBarStyle animation to prevent flickering
 
   const indicatorStyle = useAnimatedStyle(() => {
     const tabWidth = (containerWidth - 16) / tabs.length; // Account for container padding (8px on each side)

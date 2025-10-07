@@ -7,11 +7,11 @@ import FloatingTabBar, { TabBarItem } from '@/components/FloatingTabBar';
 import { colors } from '@/styles/commonStyles';
 
 export default function TabLayout() {
-  // Define the tabs configuration
+  // Define the tabs configuration with correct routes
   const tabs: TabBarItem[] = [
     {
       name: '(home)',
-      route: '/(tabs)/(home)/',
+      route: '/(tabs)/(home)',
       icon: 'house.fill',
       label: 'Events',
     },

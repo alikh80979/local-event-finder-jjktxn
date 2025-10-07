@@ -46,7 +46,14 @@ export default function ProfileScreen() {
   ];
 
   const renderProfileOption = (option: typeof profileOptions[0], index: number) => (
-    <Pressable key={index} style={styles.optionCard}>
+    <Pressable 
+      key={index} 
+      style={styles.optionCard}
+      onPress={() => {
+        console.log('Profile option pressed:', option.title);
+        // Here you could navigate to specific screens for each option
+      }}
+    >
       <View style={[styles.optionIcon, { backgroundColor: option.color }]}>
         <IconSymbol name={option.icon as any} color={colors.card} size={24} />
       </View>
@@ -87,7 +94,13 @@ export default function ProfileScreen() {
           {profileOptions.map(renderProfileOption)}
         </View>
 
-        <Pressable style={styles.signOutButton}>
+        <Pressable 
+          style={styles.signOutButton}
+          onPress={() => {
+            console.log('Sign out pressed');
+            // Here you could add sign out logic
+          }}
+        >
           <Text style={styles.signOutText}>Sign Out</Text>
         </Pressable>
       </ScrollView>

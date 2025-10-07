@@ -21,8 +21,10 @@ export default function HomeScreen() {
   const [maxDistance, setMaxDistance] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
 
+  console.log('HomeScreen - Current filters:', { selectedCategory, maxDistance, searchQuery });
+
   const filteredEvents = useMemo(() => {
-    return events.filter(event => {
+    const filtered = events.filter(event => {
       const matchesCategory = selectedCategory === 'All' || event.category === selectedCategory;
       const matchesDistance = event.distance <= maxDistance;
       const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -30,13 +32,19 @@ export default function HomeScreen() {
       
       return matchesCategory && matchesDistance && matchesSearch;
     });
+    
+    console.log('Filtered events count:', filtered.length);
+    return filtered;
   }, [selectedCategory, maxDistance, searchQuery]);
 
   const renderEventCard = (event: Event) => (
     <Pressable
       key={event.id}
       style={styles.eventCard}
-      onPress={() => router.push(`/event/${event.id}`)}
+      onPress={() => {
+        console.log('Navigating to event:', event.id);
+        router.push(`/event/${event.id}`);
+      }}
     >
       <Image source={{ uri: event.imageUrl }} style={styles.eventImage} />
       <View style={styles.eventContent}>
@@ -109,7 +117,10 @@ export default function HomeScreen() {
             styles.categoryButton,
             selectedCategory === category && styles.categoryButtonActive
           ]}
-          onPress={() => setSelectedCategory(category)}
+          onPress={() => {
+            console.log('Category selected:', category);
+            setSelectedCategory(category);
+          }}
         >
           <Text style={[
             styles.categoryButtonText,
@@ -133,7 +144,10 @@ export default function HomeScreen() {
               styles.distanceButton,
               maxDistance === distance && styles.distanceButtonActive
             ]}
-            onPress={() => setMaxDistance(distance)}
+            onPress={() => {
+              console.log('Distance selected:', distance);
+              setMaxDistance(distance);
+            }}
           >
             <Text style={[
               styles.distanceButtonText,
@@ -169,7 +183,10 @@ export default function HomeScreen() {
             placeholder="Search events..."
             placeholderTextColor={colors.textSecondary}
             value={searchQuery}
-            onChangeText={setSearchQuery}
+            onChangeText={(text) => {
+              console.log('Search query changed:', text);
+              setSearchQuery(text);
+            }}
           />
         </View>
       </View>
